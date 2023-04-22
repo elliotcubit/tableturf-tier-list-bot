@@ -1,0 +1,992 @@
+{
+    "1": {
+        "name": "Hero Shot",
+        "rarity": "Fresh",
+        "cost": 5
+    },
+    "10": {
+        "name": ".96 Gal",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "100": {
+        "name": "Big Man",
+        "rarity": "Fresh",
+        "cost": 6
+    },
+    "101": {
+        "name": "Judd",
+        "rarity": "Fresh",
+        "cost": 5
+    },
+    "102": {
+        "name": "Li'l Judd",
+        "rarity": "Fresh",
+        "cost": 3
+    },
+    "103": {
+        "name": "SquidForce",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "104": {
+        "name": "Zink",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "105": {
+        "name": "Krak-On",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "106": {
+        "name": "Rockenberg",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "107": {
+        "name": "Zekko",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "108": {
+        "name": "Forge",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "109": {
+        "name": "Firefin",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "11": {
+        "name": "Jet Squelcher",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "110": {
+        "name": "Skalop",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "111": {
+        "name": "Splash Mob",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "112": {
+        "name": "Inkline",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "113": {
+        "name": "Tentatek",
+        "rarity": "Rare",
+        "cost": 1
+    },
+    "114": {
+        "name": "Takoroka",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "115": {
+        "name": "Annaki",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "116": {
+        "name": "Enperry",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "117": {
+        "name": "Toni Kensa",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "118": {
+        "name": "Barazushi",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "119": {
+        "name": "Emberz",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "12": {
+        "name": "Luna Blaster",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "120": {
+        "name": "Octotrooper",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "121": {
+        "name": "Shielded Octotrooper",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "122": {
+        "name": "Twintacle Octotrooper",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "123": {
+        "name": "Octohopper",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "124": {
+        "name": "Octocopter",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "125": {
+        "name": "Octobomber",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "126": {
+        "name": "Octodisco",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "127": {
+        "name": "Octopod",
+        "rarity": "Common",
+        "cost": 1
+    },
+    "128": {
+        "name": "Oversized Octopod",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "129": {
+        "name": "Tentakook",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "13": {
+        "name": "Blaster",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "130": {
+        "name": "Octosniper",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "131": {
+        "name": "Octocommander",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "132": {
+        "name": "Octomissile",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "133": {
+        "name": "Octozeppelin",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "134": {
+        "name": "Squee-G",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "135": {
+        "name": "Octostamp",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "136": {
+        "name": "Amped Octostamp",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "137": {
+        "name": "Flooder",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "138": {
+        "name": "Octoballer",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "139": {
+        "name": "Octoling",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "14": {
+        "name": "Range Blaster",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "140": {
+        "name": "DJ Octavio",
+        "rarity": "Fresh",
+        "cost": 6
+    },
+    "141": {
+        "name": "Chum",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "142": {
+        "name": "Cohock",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "143": {
+        "name": "Snatcher",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "144": {
+        "name": "Steelhead",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "145": {
+        "name": "Steel Eel",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "146": {
+        "name": "Scrapper",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "147": {
+        "name": "Stinger",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "148": {
+        "name": "Maws",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "149": {
+        "name": "Drizzler",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "15": {
+        "name": "Clash Blaster",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "150": {
+        "name": "Flyfish",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "151": {
+        "name": "Fish Stick",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "152": {
+        "name": "Flipper-Flopper",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "153": {
+        "name": "Slammin' Lid",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "154": {
+        "name": "Big Shot",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "155": {
+        "name": "Goldie",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "156": {
+        "name": "Griller",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "157": {
+        "name": "Mothership",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "158": {
+        "name": "Mudmouth",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "159": {
+        "name": "Zapfish",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "16": {
+        "name": "Rapid Blaster",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "160": {
+        "name": "Tower Control",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "161": {
+        "name": "Rainmaker",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "162": {
+        "name": "Power Clam",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "163": {
+        "name": "Custom Splattershot Jr.",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "164": {
+        "name": "Aerospray RG",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "165": {
+        "name": "Tentatek Splattershot",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "166": {
+        "name": "Forge Splattershot Pro",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "167": {
+        "name": "Splattershot Nova",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "168": {
+        "name": "Luna Blaster Neo",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "169": {
+        "name": "Carbon Roller Deco",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "17": {
+        "name": "Rapid Blaster Pro",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "170": {
+        "name": "Big Swig Roller",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "171": {
+        "name": "Inkbrush Nouveau",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "172": {
+        "name": "Snipewriter 5H",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "173": {
+        "name": "Slosher Deco",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "174": {
+        "name": "Zink Mini Splatling",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "175": {
+        "name": "Dapple Dualies Nouveau",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "176": {
+        "name": "Neo Sploosh-o-matic",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "177": {
+        "name": "Neo Splash-o-matic",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "178": {
+        "name": "N-ZAP '89",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "179": {
+        "name": ".96 Gal Deco",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "18": {
+        "name": "L-3 Nozzlenose",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "180": {
+        "name": "Custom Jet Squelcher",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "181": {
+        "name": "Clash Blaster Neo",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "182": {
+        "name": "Rapid Blaster Deco",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "183": {
+        "name": "L-3 Nozzlenose D",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "184": {
+        "name": "Krak-On Splat Roller",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "185": {
+        "name": "Z+F Splat Charger",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "186": {
+        "name": "Z+F Splatterscope",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "187": {
+        "name": "Tri-Slosher Nouveau",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "188": {
+        "name": "Kraken Royale",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "189": {
+        "name": "Super Chump",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "19": {
+        "name": "H-3 Nozzlenose",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "190": {
+        "name": "Shelly & Donny",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "191": {
+        "name": "Annie",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "192": {
+        "name": "Jelonzo",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "193": {
+        "name": "Fred Crumbs",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "194": {
+        "name": "Spyke",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "195": {
+        "name": "The Eel Deal - Frye",
+        "rarity": "Fresh",
+        "cost": 5
+    },
+    "196": {
+        "name": "The Cold-Blooded Bandit - Shiver",
+        "rarity": "Fresh",
+        "cost": 5
+    },
+    "197": {
+        "name": "The Hype Manta Storm - Big Man",
+        "rarity": "Fresh",
+        "cost": 5
+    },
+    "198": {
+        "name": "Z+F",
+        "rarity": "Rare",
+        "cost": 4
+    },
+    "2": {
+        "name": "Sploosh-o-matic",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "20": {
+        "name": "Squeezer",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "21": {
+        "name": "Carbon Roller",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "22": {
+        "name": "Splat Roller",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "23": {
+        "name": "Dynamo Roller",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "24": {
+        "name": "Flingza Roller",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "25": {
+        "name": "Inkbrush",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "26": {
+        "name": "Octobrush",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "27": {
+        "name": "Classic Squiffer",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "28": {
+        "name": "Splat Charger",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "29": {
+        "name": "Splatterscope",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "3": {
+        "name": "Splattershot Jr.",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "30": {
+        "name": "E-liter 4K",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "31": {
+        "name": "E-liter 4K Scope",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "32": {
+        "name": "Bamboozler 14 Mk I",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "33": {
+        "name": "Goo Tuber",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "34": {
+        "name": "Slosher",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "35": {
+        "name": "Tri-Slosher",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "36": {
+        "name": "Sloshing Machine",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "37": {
+        "name": "Bloblobber",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "38": {
+        "name": "Explosher",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "39": {
+        "name": "Mini Splatling",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "4": {
+        "name": "Splash-o-matic",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "40": {
+        "name": "Heavy Splatling",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "41": {
+        "name": "Hydra Splatling",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "42": {
+        "name": "Ballpoint Splatling",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "43": {
+        "name": "Nautilus 47",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "44": {
+        "name": "Dapple Dualies",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "45": {
+        "name": "Splat Dualies",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "46": {
+        "name": "Glooga Dualies",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "47": {
+        "name": "Dualie Squelchers",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "48": {
+        "name": "Dark Tetra Dualies",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "49": {
+        "name": "Splat Brella",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "5": {
+        "name": "Aerospray MG",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "50": {
+        "name": "Tenta Brella",
+        "rarity": "Common",
+        "cost": 5
+    },
+    "51": {
+        "name": "Undercover Brella",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "52": {
+        "name": "Tri-Stringer",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "53": {
+        "name": "REEF-LUX 450",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "54": {
+        "name": "Splatana Stamper",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "55": {
+        "name": "Splatana Wiper",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "56": {
+        "name": "Splat Bomb",
+        "rarity": "Common",
+        "cost": 1
+    },
+    "57": {
+        "name": "Suction Bomb",
+        "rarity": "Common",
+        "cost": 1
+    },
+    "58": {
+        "name": "Burst Bomb",
+        "rarity": "Common",
+        "cost": 1
+    },
+    "59": {
+        "name": "Sprinkler",
+        "rarity": "Common",
+        "cost": 1
+    },
+    "6": {
+        "name": "Splattershot",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "60": {
+        "name": "Splash Wall",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "61": {
+        "name": "Fizzy Bomb",
+        "rarity": "Common",
+        "cost": 1
+    },
+    "62": {
+        "name": "Curling Bomb",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "63": {
+        "name": "Autobomb",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "64": {
+        "name": "Squid Beakon",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "65": {
+        "name": "Point Sensor",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "66": {
+        "name": "Ink Mine",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "67": {
+        "name": "Toxic Mist",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "68": {
+        "name": "Angle Shooter",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "69": {
+        "name": "Torpedo",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "7": {
+        "name": ".52 Gal",
+        "rarity": "Common",
+        "cost": 3
+    },
+    "70": {
+        "name": "Trizooka",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "71": {
+        "name": "Big Bubbler",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "72": {
+        "name": "Zipcaster",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "73": {
+        "name": "Tenta Missiles",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "74": {
+        "name": "Ink Storm",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "75": {
+        "name": "Booyah Bomb",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "76": {
+        "name": "Wave Breaker",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "77": {
+        "name": "Ink Vac",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "78": {
+        "name": "Killer Wail 5.1",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "79": {
+        "name": "Inkjet",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "8": {
+        "name": "N-ZAP '85",
+        "rarity": "Common",
+        "cost": 2
+    },
+    "80": {
+        "name": "Ultra Stamp",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "81": {
+        "name": "Crab Tank",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "82": {
+        "name": "Reefslider",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "83": {
+        "name": "Triple Inkstrike",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "84": {
+        "name": "Tacticooler",
+        "rarity": "Rare",
+        "cost": 3
+    },
+    "85": {
+        "name": "Sheldon",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "86": {
+        "name": "Gnarly Eddy",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "87": {
+        "name": "Jel La Fleur",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "88": {
+        "name": "Mr. Coco",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "89": {
+        "name": "Harmony",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "9": {
+        "name": "Splattershot Pro",
+        "rarity": "Common",
+        "cost": 4
+    },
+    "90": {
+        "name": "Murch",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "91": {
+        "name": "Mr. Grizz",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "92": {
+        "name": "Marigold",
+        "rarity": "Rare",
+        "cost": 5
+    },
+    "93": {
+        "name": "Smallfry",
+        "rarity": "Fresh",
+        "cost": 1
+    },
+    "94": {
+        "name": "Cuttlefish",
+        "rarity": "Fresh",
+        "cost": 5
+    },
+    "95": {
+        "name": "Captain",
+        "rarity": "Fresh",
+        "cost": 6
+    },
+    "96": {
+        "name": "Callie",
+        "rarity": "Fresh",
+        "cost": 5
+    },
+    "97": {
+        "name": "Marie",
+        "rarity": "Fresh",
+        "cost": 5
+    },
+    "98": {
+        "name": "Shiver",
+        "rarity": "Fresh",
+        "cost": 6
+    },
+    "99": {
+        "name": "Frye",
+        "rarity": "Fresh",
+        "cost": 6
+    }
+}
