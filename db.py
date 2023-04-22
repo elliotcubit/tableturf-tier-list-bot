@@ -1,17 +1,21 @@
 import os
 import re
 import sqlite3
+import json
 
 class DB:
-    def __init__(self, fname: str, gallery_path: str, round_size: int = 4):
+    def __init__(self, fname: str, manifest_path: str, gallery_path: str):
         self.conn = sqlite3.connect(fname)
         self.gallery_path = gallery_path
-        self.round_size = round_size
         cur = self.conn.cursor()
+
+        with open(manifest_path) as f:
+            self.manifest = json.loads(f.read())
 
         cur.execute("""CREATE TABLE IF NOT EXISTS cards(
             number INTEGER PRIMARY KEY,
             name VARCHAR(255),
+            cost INTEGER,
             rarity VARCHAR(255),
             voted INTEGER
         )""")
@@ -30,26 +34,17 @@ class DB:
             number INTEGER
         )""")
 
-        prog = re.compile("No. (\d+) (.*) \((.*)\).jpg")
+        rows = []
+        for number in self.manifest:
+            rows.append((number, self.manifest[number]["name"], self.manifest[number]["cost"], self.manifest[number]["rarity"]))
 
-        data = []
-        for _root, _dirs, files in os.walk(gallery_path):
-            for fname in files:
-                result = prog.match(fname)
-                if not result:
-                    continue
-
-                number = int(result.group(1))
-                name = result.group(2)
-                rarity = result.group(3)
-                data.append((number, name, rarity))
-
-        cur.executemany("INSERT OR IGNORE INTO cards VALUES(?, ?, ?, 0)", data)
+        cur.executemany("INSERT OR IGNORE INTO cards VALUES(?, ?, ?, ?, 0)", rows)
         self.conn.commit()
 
-    def get_next_group(self):
+    def get_next_group(self, round_size):
         cur = self.conn.cursor()
-        res = cur.execute(f"SELECT number, name, rarity FROM cards WHERE voted = 0 ORDER BY RANDOM() LIMIT {self.round_size};")
+        cost = self.get_lowest_cost()
+        res = cur.execute("SELECT number, name, rarity FROM cards WHERE voted = 0 AND cost = ? LIMIT ?;", [(cost), (round_size)])
         return res.fetchall()
     
     def get_name(self, num: int):
@@ -57,10 +52,7 @@ class DB:
         return cur.execute("SELECT name FROM cards WHERE number=?", [(num)]).fetchone()[0]
 
     def get_img(self, num: int):
-        cur = self.conn.cursor()
-        res = cur.execute("SELECT number, name, rarity FROM cards WHERE number=?", [(num)]).fetchone()
-        imgname = f"No. {res[0]} {res[1]} ({res[2]}).jpg"
-        return open(os.path.join(self.gallery_path, imgname), mode="rb")
+        return open(os.path.join(self.gallery_path, str(num)+".jpg"), mode="rb")
     
     def insert_messages(self, msgs):
         cur = self.conn.cursor()
@@ -87,3 +79,13 @@ class DB:
         cur = self.conn.cursor()
         cur.execute("DELETE FROM messages WHERE id = ?", [(msg_id)])
         self.conn.commit()
+
+    def get_lowest_cost(self):
+        cur = self.conn.cursor()
+        res = cur.execute("SELECT MIN(cost) FROM cards WHERE voted = 0").fetchone()
+        return res[0]
+    
+    def number_for_cost(self, cost):
+        cur = self.conn.cursor()
+        res = cur.execute("SELECT COUNT(*) FROM cards WHERE cost = ? AND voted = 0", [(cost)]).fetchone()
+        return res[0]

@@ -2,7 +2,7 @@
 
 This is a discord bot used for conducting tier-list polls for Splatoon's [Tableturf Battle](https://splatoonwiki.org/wiki/Tableturf_Battle) cards.
 
-It requires a directory of card images, named with their numbers, names, and rarities in order to run. These files are bundled into the repo for convenience.
+It requires a directory of card images, named by number, and a JSON manifest of card metadata. These files are bundled into the repo for convenience.
 
 It exposes a few commands, to start/stop rounds of voting. Voting is performed by reacting to the bot's messages in a discord channel.
 

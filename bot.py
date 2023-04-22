@@ -30,7 +30,14 @@ class Poller(commands.Cog):
         self.in_progress = False
 
     @commands.slash_command()
-    async def start(self, ctx: discord.ApplicationContext):
+    @discord.option(
+        "size",
+        description = "How many cards to vote on in this group, at most",
+        min_value = 1,
+        max_value = 6,
+        default = 4,
+    )
+    async def start(self, ctx: discord.ApplicationContext, size: int):
         self.mutex.acquire()
         if self.in_progress:
             await ctx.respond("round already in progress")
@@ -49,7 +56,7 @@ class Poller(commands.Cog):
 
         msgs = []
 
-        for card in self.db.get_next_group():
+        for card in self.db.get_next_group(size):
             img = self.db.get_img(card[0])
 
             msg = await ctx.send(
@@ -87,6 +94,7 @@ class Poller(commands.Cog):
 
         ch = self.bot.get_channel(ctx.channel_id)
         msgs = self.db.get_messages(ctx.channel_id)
+        cost = self.db.get_lowest_cost()
 
         for item in msgs:
             msg = await ch.fetch_message(item[0])
@@ -109,8 +117,14 @@ class Poller(commands.Cog):
 
             # Send a message with information about the scores
             name = self.db.get_name(item[1])
-            avg = weighted_average(scores)
-            await ctx.send(f"No. {item[1]} {name}:\n{scores}\n --> avg without outliers = {avg}")
+            removed, avg = weighted_average(scores.copy())
+            await ctx.send(
+                "\n".join([
+                    f"No. {item[1]} {name}:",
+                    "Raw votes: " + ",".join([str(x) for x in scores]),
+                    f"Score ignoring {removed} lowest and highest votes: {avg}"
+                ])
+            )
 
             # Clean up our message
             if self.should_delete_messages:
@@ -118,6 +132,9 @@ class Poller(commands.Cog):
 
             # Remove that message from the table
             self.db.remove_message(item[0])
+
+        left = self.db.number_for_cost(cost)
+        await ctx.send(f"There are {left} cards with cost {cost} remaining.")
 
         self.in_progress = False
         self.mutex.release()
@@ -155,7 +172,7 @@ def weighted_average(lst):
     for i in range(len(lst)):
         s += (i+1)*lst[i]
     
-    return s/(total_votes - (to_remove * 2))
+    return (to_remove, s/(total_votes - (to_remove * 2)))
 
 def setup(bot: discord.Bot, db: DB, should_delete_messages: bool = False):
     bot.add_cog(Poller(bot, db, should_delete_messages))
