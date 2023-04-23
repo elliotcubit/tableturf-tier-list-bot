@@ -37,6 +37,7 @@ class Poller(commands.Cog):
         max_value = 6,
         default = 4,
     )
+    @commands.has_any_role("Whopper")
     async def start(self, ctx: discord.ApplicationContext, size: int):
         self.mutex.acquire()
         if self.in_progress:
@@ -79,6 +80,7 @@ class Poller(commands.Cog):
         self.mutex.release()
 
     @commands.slash_command()
+    @commands.has_any_role("Whopper")
     async def stop(self, ctx: discord.ApplicationContext):
         self.mutex.acquire()
         # If there are messages, we are in progress
@@ -149,6 +151,9 @@ def normal_round(n):
 # the top and bottom 10% of votes.
 def weighted_average(lst):
     total_votes = sum(lst)
+    if total_votes == 0:
+        return (0, 0)
+    
     to_remove = normal_round((total_votes/10)+0.01)
 
     def remove(idxs):

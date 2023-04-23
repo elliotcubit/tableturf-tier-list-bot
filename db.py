@@ -3,6 +3,30 @@ import re
 import sqlite3
 import json
 
+# Things already voted on before the bot existed
+has_voted = """Splatana Wiper
+Octostamp
+Tri-Slosher
+Tri-Slosher Nouveau
+Curling Bomb
+Custom Splattershot Jr.
+Splattershot Jr.
+Octomissile
+Torpedo
+Octocopter
+Suction Bomb
+Smallfry
+Splat Bomb
+Fizzy Bomb
+Tentatek
+Sprinkler
+Octopod
+Burst Bomb
+Point Sensor
+N-ZAP '85
+Ink Mine
+Toxic Mist""".split("\n")
+
 class DB:
     def __init__(self, fname: str, manifest_path: str, gallery_path: str):
         self.conn = sqlite3.connect(fname)
@@ -39,6 +63,11 @@ class DB:
             rows.append((number, self.manifest[number]["name"], self.manifest[number]["cost"], self.manifest[number]["rarity"]))
 
         cur.executemany("INSERT OR IGNORE INTO cards VALUES(?, ?, ?, ?, 0)", rows)
+        
+        for thing in has_voted:
+            num = self.number_for_name(thing)
+            self.mark_has_voted(num)
+        
         self.conn.commit()
 
     def get_next_group(self, round_size):
@@ -74,6 +103,11 @@ class DB:
         cur = self.conn.cursor()
         cur.execute("UPDATE cards SET voted = 1 WHERE number=?", [(number)])
         self.conn.commit()
+
+    def number_for_name(self, name):
+        cur = self.conn.cursor()
+        res = cur.execute("SELECT number FROM cards WHERE name=?", [(name)]).fetchone()[0]
+        return res
 
     def remove_message(self, msg_id):
         cur = self.conn.cursor()
