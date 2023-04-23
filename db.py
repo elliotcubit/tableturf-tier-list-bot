@@ -73,7 +73,7 @@ class DB:
     def get_next_group(self, round_size):
         cur = self.conn.cursor()
         cost = self.get_lowest_cost()
-        res = cur.execute("SELECT number, name, rarity FROM cards WHERE voted = 0 AND cost = ? LIMIT ?;", [(cost), (round_size)])
+        res = cur.execute("SELECT number, name, rarity FROM cards WHERE voted = 0 AND cost = ? ORDER BY RANDOM() LIMIT ?;", [(cost), (round_size)])
         return res.fetchall()
     
     def get_name(self, num: int):
