@@ -142,7 +142,7 @@ class Poller(commands.Cog):
                 ])
             )
 
-            summaries.append((ctx.channel_id, msg.id))
+            summaries.append((ctx.channel_id, summary.id))
 
             # Clean up our message
             if self.should_delete_messages:
@@ -151,10 +151,13 @@ class Poller(commands.Cog):
             # Remove that message from the table
             self.db.remove_message(item[0])
 
-        self.db.insert_summaries(summaries)
+        
 
         left = self.db.number_for_cost(cost)
-        await ctx.send(f"There are {left} cards with cost {cost} remaining.")
+        summary = await ctx.send(f"There are {left} cards with cost {cost} remaining.")
+        summaries.append((ctx.channel_id, summary.id))
+
+        self.db.insert_summaries(summaries)
 
         self.in_progress = False
         self.mutex.release()
