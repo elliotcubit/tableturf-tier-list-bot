@@ -138,7 +138,7 @@ class Poller(commands.Cog):
                     f"No. {item[1]} {name}:",
                     "Raw votes: " + ",".join([str(x) for x in scores]),
                     "Total after removal: " + str(total),
-                    "Score: " + str(avg),
+                    f"Score: {avg:.4f}",
                 ])
             )
 
