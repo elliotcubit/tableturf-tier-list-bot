@@ -55,6 +55,16 @@ class Poller(commands.Cog):
         self.in_progress = True
         await ctx.respond("ok!")
 
+        # Delete summaries from the previous round
+        ch = self.bot.get_channel(ctx.channel_id)
+        for item in self.db.get_summaries(ctx.channel_id):
+            msg = await ch.fetch_message(item[0])
+            if msg is None:
+                self.db.remove_summary(item[0])
+            if self.should_delete_messages:
+                await msg.delete()
+            self.db.remove_summary(item[0])
+
         msgs = []
 
         for card in self.db.get_next_group(size):
@@ -98,6 +108,8 @@ class Poller(commands.Cog):
         msgs = self.db.get_messages(ctx.channel_id)
         cost = self.db.get_lowest_cost()
 
+        summaries = []
+
         for item in msgs:
             msg = await ch.fetch_message(item[0])
             if msg is None:
@@ -119,14 +131,18 @@ class Poller(commands.Cog):
 
             # Send a message with information about the scores
             name = self.db.get_name(item[1])
-            removed, avg = weighted_average(scores.copy())
-            await ctx.send(
+            removed, total, avg = weighted_average(scores.copy())
+
+            summary = await ctx.send(
                 "\n".join([
                     f"No. {item[1]} {name}:",
                     "Raw votes: " + ",".join([str(x) for x in scores]),
-                    f"Score ignoring {removed} lowest and highest votes: {avg}"
+                    "Total after removal: " + str(total),
+                    "Score: " + str(avg),
                 ])
             )
+
+            summaries.append((ctx.channel_id, msg.id))
 
             # Clean up our message
             if self.should_delete_messages:
@@ -134,6 +150,8 @@ class Poller(commands.Cog):
 
             # Remove that message from the table
             self.db.remove_message(item[0])
+
+        self.db.insert_summaries(summaries)
 
         left = self.db.number_for_cost(cost)
         await ctx.send(f"There are {left} cards with cost {cost} remaining.")
@@ -177,7 +195,7 @@ def weighted_average(lst):
     for i in range(len(lst)):
         s += (i+1)*lst[i]
     
-    return (to_remove, s/(total_votes - (to_remove * 2)))
+    return (to_remove, s, s/(total_votes - (to_remove * 2)))
 
 def setup(bot: discord.Bot, db: DB, should_delete_messages: bool = False):
     bot.add_cog(Poller(bot, db, should_delete_messages))

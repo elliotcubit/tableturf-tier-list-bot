@@ -58,6 +58,11 @@ class DB:
             number INTEGER
         )""")
 
+        cur.execute("""CREATE TABLE IF NOT EXISTS summaries(
+            channel_id INTEGER,
+            id INTEGER
+        )""")
+
         rows = []
         for number in self.manifest:
             rows.append((number, self.manifest[number]["name"], self.manifest[number]["cost"], self.manifest[number]["rarity"]))
@@ -83,6 +88,21 @@ class DB:
     def get_img(self, num: int):
         return open(os.path.join(self.gallery_path, str(num)+".jpg"), mode="rb")
     
+    def insert_summaries(self, msgs):
+        cur = self.conn.cursor()
+        cur.executemany("INSERT OR IGNORE INTO summaries VALUES(?, ?)", msgs)
+        self.conn.commit()
+
+    def get_summaries(self, channel_id):
+        cur = self.conn.cursor()
+        res = cur.execute("SELECT id FROM summaries WHERE channel_id = ?", [(channel_id)]).fetchall()
+        return res
+
+    def remove_summary(self, msg_id):
+        cur = self.conn.cursor()
+        cur.execute("DELETE FROM summaries WHERE id = ?", [(msg_id)])
+        self.conn.commit()
+
     def insert_messages(self, msgs):
         cur = self.conn.cursor()
         cur.executemany("INSERT OR IGNORE INTO messages VALUES(?, ?, ?)", msgs)
