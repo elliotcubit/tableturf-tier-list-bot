@@ -25,7 +25,24 @@ Burst Bomb
 Point Sensor
 N-ZAP '85
 Ink Mine
-Toxic Mist""".split("\n")
+Toxic Mist
+Trizooka
+Big Bubbler
+Zipcaster
+Tenta Missiles
+Ink Storm
+Booyah Bomb
+Wave Breaker
+Ink Vac
+Killer Wail 5.1
+Inkjet
+Ultra Stamp
+Crab Tank
+Reefslider
+Triple Inkstrike
+Tacticooler
+Kraken Royale
+Super Chump""".split("\n")
 
 class DB:
     def __init__(self, fname: str, manifest_path: str, gallery_path: str):
