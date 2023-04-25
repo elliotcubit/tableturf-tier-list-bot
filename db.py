@@ -40,6 +40,9 @@ Ultra Stamp
 Crab Tank
 Reefslider
 Triple Inkstrike
+Zink Mini Splatling
+Bamboozler 14 Mk I
+Z+F Splat Charger
 Tacticooler
 Kraken Royale
 Super Chump""".split("\n")
