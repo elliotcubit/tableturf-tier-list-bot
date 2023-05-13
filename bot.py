@@ -31,6 +31,17 @@ class Poller(commands.Cog):
 
     @commands.slash_command()
     @discord.option(
+        "channel",
+        discord.ForumChannel,
+    )
+    async def set_forum_channel(self, ctx: discord.ApplicationContext, channel: discord.ForumChannel):
+        self.mutex.acquire()
+        self.db.set_forum_chan(channel.id)
+        await ctx.respond(f"Ok! I will create forum posts in <#{channel.id}> from now on.")
+        self.mutex.release()
+
+    @commands.slash_command()
+    @discord.option(
         "size",
         description = "How many cards to vote on in this group, at most",
         min_value = 1,
