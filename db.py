@@ -39,6 +39,10 @@ class DB:
             id INTEGER
         )""")
 
+        cur.execute("""CREATE TABLE IF NOT EXISTS forum_chan(
+            channel_id INTEGER
+        )""")
+
         rows = []
         for number in self.manifest:
             rows.append((number, self.manifest[number]["name"], self.manifest[number]["cost"], self.manifest[number]["rarity"]))
@@ -46,6 +50,18 @@ class DB:
         cur.executemany("INSERT OR IGNORE INTO cards VALUES(?, ?, ?, ?, 0)", rows)
         
         self.conn.commit()
+
+    def set_forum_chan(self, id):
+        cur = self.conn.cursor()
+        # Drop whatever is in it
+        cur.execute("DELETE FROM forum_chan")
+        cur.execute("INSERT INTO forum_chan VALUES(?)", [(id)])
+        self.conn.commit()
+
+    def get_forum_chan(self):
+        cur = self.conn.cursor()
+        res = cur.execute("SELECT channel_id FROM forum_chan").fetchone()
+        return res if not res else res[0]
 
     def get_next_group(self, round_size):
         cur = self.conn.cursor()
