@@ -3,48 +3,6 @@ import re
 import sqlite3
 import json
 
-# Things already voted on before the bot existed
-has_voted = """Splatana Wiper
-Octostamp
-Tri-Slosher
-Tri-Slosher Nouveau
-Curling Bomb
-Custom Splattershot Jr.
-Splattershot Jr.
-Octomissile
-Torpedo
-Octocopter
-Suction Bomb
-Smallfry
-Splat Bomb
-Fizzy Bomb
-Tentatek
-Sprinkler
-Octopod
-Burst Bomb
-Point Sensor
-N-ZAP '85
-Ink Mine
-Toxic Mist
-Trizooka
-Big Bubbler
-Zipcaster
-Tenta Missiles
-Ink Storm
-Booyah Bomb
-Wave Breaker
-Ink Vac
-Killer Wail 5.1
-Inkjet
-Ultra Stamp
-Crab Tank
-Reefslider
-Triple Inkstrike
-Zink Mini Splatling
-Tacticooler
-Kraken Royale
-Super Chump""".split("\n")
-
 class DB:
     def __init__(self, fname: str, manifest_path: str, gallery_path: str):
         self.conn = sqlite3.connect(fname)
@@ -86,10 +44,6 @@ class DB:
             rows.append((number, self.manifest[number]["name"], self.manifest[number]["cost"], self.manifest[number]["rarity"]))
 
         cur.executemany("INSERT OR IGNORE INTO cards VALUES(?, ?, ?, ?, 0)", rows)
-        
-        for thing in has_voted:
-            num = self.number_for_name(thing)
-            self.mark_has_voted(num)
         
         self.conn.commit()
 
