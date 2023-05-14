@@ -11,6 +11,8 @@ from db import DB
 intents = discord.Intents.default()
 bot = discord.Bot(intents = intents)
 
+forumPostDescription = "Placeholder forum post description"
+
 reactions = [str(x)+"\N{combining enclosing keycap}" for x in list(range(1,10))+[0]]
 def score_from_reaction_name(name: str) -> Optional[int]:
     if name not in reactions:
@@ -43,7 +45,7 @@ class Poller(commands.Cog):
     @commands.slash_command()
     @discord.option(
         "size",
-        description = "How many cards to vote on in this group, at most",
+        description = "How many cards to vote on in this group, at most.",
         min_value = 1,
         max_value = 6,
         default = 4,
@@ -51,20 +53,33 @@ class Poller(commands.Cog):
     @commands.has_any_role("Whopper")
     async def start(self, ctx: discord.ApplicationContext, size: int):
         self.mutex.acquire()
+
+        forum_ch_id = self.db.get_forum_chan()
+        if forum_ch_id is None:
+            await ctx.respond("Please set a forum channel with /set_forum_channel first.")
+            self.mutex.release()
+            return
+
+        forum_ch = self.bot.get_channel(forum_ch_id)
+        if forum_ch is None:
+            await ctx.respond("Could not find forum channel - try resetting it?")
+            self.mutex.release()
+            return
+
         if self.in_progress:
-            await ctx.respond("round already in progress")
+            await ctx.respond("A round already in progress.")
             self.mutex.release()
             return
         
         # If there are messages in the channel, we are in progress
         if self.db.get_messages(ctx.channel_id):
-            await ctx.respond("round already in progress")
+            await ctx.respond("A round already in progress.")
             self.in_progress = True
             self.mutex.release()
             return
         
         self.in_progress = True
-        await ctx.respond("ok!")
+        await ctx.respond(f"Ok! Starting a new round with at most {size} {self.db.get_lowest_cost()}-cost cards.")
 
         # Delete summaries from the previous round
         ch = self.bot.get_channel(ctx.channel_id)
@@ -77,14 +92,12 @@ class Poller(commands.Cog):
             self.db.remove_summary(item[0])
 
         msgs = []
-
         for card in self.db.get_next_group(size):
-            img = self.db.get_img(card[0])
-
+            # Send message and set reactions on it
             msg = await ctx.send(
                 f"No. {card[0]} {card[1]} ({card[2]})",
                 file = discord.File(
-                    img,
+                    self.db.get_img(card[0]),
                     filename=card[1].lower().replace(" ", "_") + ".jpg",
                 ),
             )
@@ -96,6 +109,33 @@ class Poller(commands.Cog):
             await group
 
             msgs.append((ctx.channel_id, msg.id, card[0]))
+
+            # Find the relevant tag
+            tags = []
+            for tag in forum_ch.available_tags:
+                if tag.name == f"{self.db.get_lowest_cost()} Cost":
+                    tags.append(tag)
+                    break
+
+            # Create the forum post
+            #
+            # This is a hack. Pycord does not support creating a thread with files directly.
+            # Instead the thread must be created, then edited to add the file.
+            #
+            # See
+            # https://github.com/Pycord-Development/pycord/issues/1948
+            # https://github.com/Pycord-Development/pycord/issues/1949
+            thread = await forum_ch.create_thread(
+                name = f"{card[1]} Discussion",
+                content = forumPostDescription,
+                applied_tags = tags,
+            )
+
+            message = await thread.fetch_message(thread.id)
+            await message.edit(file=discord.File(
+                    self.db.get_img(card[0]),
+                    filename=card[1].lower().replace(" ", "_") + ".jpg",
+                ))
         
         self.db.insert_messages(msgs)
         self.mutex.release()
@@ -109,11 +149,11 @@ class Poller(commands.Cog):
             self.in_progress = True
 
         if not self.in_progress:
-            await ctx.respond("round is not in progress")
+            await ctx.respond("A round is not in progress.")
             self.mutex.release()
             return
 
-        await ctx.respond("ok!")
+        await ctx.respond("Ok! Tallying votes :)")
 
         ch = self.bot.get_channel(ctx.channel_id)
         msgs = self.db.get_messages(ctx.channel_id)
@@ -184,7 +224,7 @@ def normal_round(n):
 def weighted_average(lst):
     total_votes = sum(lst)
     if total_votes == 0:
-        return (0, 0)
+        return (0, 0, 0)
     
     to_remove = normal_round((total_votes/10)+0.01)
 
