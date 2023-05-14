@@ -11,7 +11,7 @@ from db import DB
 intents = discord.Intents.default()
 bot = discord.Bot(intents = intents)
 
-forumPostDescription = "Placeholder forum post description"
+forumPostDescription = "Discuss how this normal card would be placed into the tier list! Assuming how easily it can be used in general or placed into a deck. Factors which contribute to this include offense, (poking/piercing, flanking, winning clashes, good special tile placement so you can easily special attack from it later) defense, (blocking, establishing routes, map control/occupying space, good normal/special tile placement so it isn't easily special attacked over later) openings, (meaning its played on the 1st turn) special building, (combo ability, how easy is it to activate the card's special point) special attacks, (this can be considered for all aspects of the match which is early/mid/endgame) its ability to be played at any time, (wont be a brick/unusable past a specific point) and finally the niche situations that it would be usable in if thats applicable. Which is described in the voting channel. (Note that every map is considered in discussions except for Box Seats)"
 
 reactions = [str(x)+"\N{combining enclosing keycap}" for x in list(range(1,10))+[0]]
 def score_from_reaction_name(name: str) -> Optional[int]:
@@ -127,7 +127,7 @@ class Poller(commands.Cog):
             # https://github.com/Pycord-Development/pycord/issues/1948
             # https://github.com/Pycord-Development/pycord/issues/1949
             thread = await forum_ch.create_thread(
-                name = f"{card[1]} Discussion",
+                name = card[1],
                 content = forumPostDescription,
                 applied_tags = tags,
             )
