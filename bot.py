@@ -36,6 +36,7 @@ class Poller(commands.Cog):
         "channel",
         discord.ForumChannel,
     )
+    @commands.has_any_role("Whopper")
     async def set_forum_channel(self, ctx: discord.ApplicationContext, channel: discord.ForumChannel):
         self.mutex.acquire()
         self.db.set_forum_chan(channel.id)
