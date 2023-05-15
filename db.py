@@ -39,6 +39,10 @@ class DB:
             id INTEGER
         )""")
 
+        cur.execute("""CREATE TABLE IF NOT EXISTS forum_posts(
+            id INTEGER
+        )""")
+
         cur.execute("""CREATE TABLE IF NOT EXISTS forum_chan(
             channel_id INTEGER
         )""")
@@ -94,6 +98,21 @@ class DB:
     def insert_messages(self, msgs):
         cur = self.conn.cursor()
         cur.executemany("INSERT OR IGNORE INTO messages VALUES(?, ?, ?)", msgs)
+        self.conn.commit()
+
+    def insert_forum_posts(self, msgs):
+        cur = self.conn.cursor()
+        cur.executemany("INSERT OR IGNORE INTO forum_posts VALUES(?)", msgs)
+        self.conn.commit()
+
+    def get_forum_posts(self):
+        cur = self.conn.cursor()
+        res = cur.execute("SELECT id FROM forum_posts").fetchall()
+        return res
+
+    def remove_forum_post(self, id):
+        cur = self.conn.cursor()
+        cur.execute("DELETE FROM forum_posts WHERE id = ?", [(id)])
         self.conn.commit()
 
     def get_messages(self, channel_id):
