@@ -116,7 +116,7 @@ class Poller(commands.Cog):
             # Find the relevant tag
             tags = []
             for tag in forum_ch.available_tags:
-                if tag.name == f"{self.db.get_lowest_cost()} Cost":
+                if tag.name == f"{self.db.get_lowest_cost()}-Cost":
                     tags.append(tag)
                     break
 
