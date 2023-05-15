@@ -88,11 +88,13 @@ class Poller(commands.Cog):
             msg = await ch.fetch_message(item[0])
             if msg is None:
                 self.db.remove_summary(item[0])
+                continue
             if self.should_delete_messages:
                 await msg.delete()
             self.db.remove_summary(item[0])
 
         msgs = []
+        forum_posts = []
         for card in self.db.get_next_group(size):
             # Send message and set reactions on it
             msg = await ctx.send(
@@ -132,6 +134,8 @@ class Poller(commands.Cog):
                 applied_tags = tags,
             )
 
+            forum_posts.append((thread.id,))
+
             message = await thread.fetch_message(thread.id)
             await message.edit(file=discord.File(
                     self.db.get_img(card[0]),
@@ -139,6 +143,7 @@ class Poller(commands.Cog):
                 ))
         
         self.db.insert_messages(msgs)
+        self.db.insert_forum_posts(forum_posts)
         self.mutex.release()
 
     @commands.slash_command()
@@ -155,6 +160,14 @@ class Poller(commands.Cog):
             return
 
         await ctx.respond("Ok! Tallying votes :)")
+
+        # Lock threads from the previous round
+        for item in self.db.get_forum_posts():
+            thread = await self.bot.fetch_channel(item[0])
+            if thread is None:
+                self.db.remove_forum_post(item[0])
+                continue
+            await thread.edit(locked=True)
 
         ch = self.bot.get_channel(ctx.channel_id)
         msgs = self.db.get_messages(ctx.channel_id)
