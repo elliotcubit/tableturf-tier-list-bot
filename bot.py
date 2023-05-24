@@ -12,6 +12,7 @@ intents = discord.Intents.default()
 bot = discord.Bot(intents = intents)
 
 forumPostDescription = "Discuss how this normal card would be placed into the tier list! Assuming how easily it can be used in general or placed into a deck. Factors which contribute to this include offense, (poking/piercing, flanking, winning clashes, good special tile placement so you can easily special attack from it later) defense, (blocking, establishing routes, map control/occupying space, good normal/special tile placement so it isn't easily special attacked over later) openings, (meaning its played on the 1st turn) special building, (combo ability, how easy is it to activate the card's special point) special attacks, (this can be considered for all aspects of the match which is early/mid/endgame) its ability to be played at any time, (wont be a brick/unusable past a specific point) and finally the niche situations that it would be usable in if thats applicable. Which is described in the voting channel. (Note that every map is considered in discussions except for Box Seats)"
+forumPostMapDescription = "Discuss what you think about this map."
 
 reactions = [str(x)+"\N{combining enclosing keycap}" for x in list(range(1,10))+[0]]
 def score_from_reaction_name(name: str) -> Optional[int]:
@@ -51,8 +52,14 @@ class Poller(commands.Cog):
         max_value = 6,
         default = 4,
     )
+    @discord.option(
+        "type",
+        description = "Thing to vote on.",
+        choices = ["card", "map"],
+        default = "card",
+    )
     @commands.has_any_role("Whopper")
-    async def start(self, ctx: discord.ApplicationContext, size: int):
+    async def start(self, ctx: discord.ApplicationContext, size: int, type: str):
         self.mutex.acquire()
 
         forum_ch_id = self.db.get_forum_chan()
@@ -80,7 +87,11 @@ class Poller(commands.Cog):
             return
         
         self.in_progress = True
-        await ctx.respond(f"Ok! Starting a new round with at most {size} {self.db.get_lowest_cost()}-cost cards.")
+
+        if type == "card":
+            await ctx.respond(f"Ok! Starting a new round with at most {size} {self.db.get_lowest_cost()}-cost cards.")
+        else:
+            await ctx.respond(f"Ok! Starting a new round with at most {size} maps.")
 
         # Delete summaries from the previous round
         ch = self.bot.get_channel(ctx.channel_id)
@@ -93,15 +104,31 @@ class Poller(commands.Cog):
                 await msg.delete()
             self.db.remove_summary(item[0])
 
+        things = []
+        if type == "card":
+            things = self.db.get_card_group(size)
+        else:
+            things = self.db.get_map_group(size)
+
+        if not things:
+            await ctx.send("There's nothing left to do!")
+
         msgs = []
         forum_posts = []
-        for card in self.db.get_next_group(size):
+        for thing in things:
+            txt = ""
+            if type == "card":
+                txt = f"No. {thing[0]} {thing[1]} ({thing[2]})"
+            else:
+                txt = thing[1]
+
+
             # Send message and set reactions on it
             msg = await ctx.send(
-                f"No. {card[0]} {card[1]} ({card[2]})",
+                txt,
                 file = discord.File(
-                    self.db.get_img(card[0]),
-                    filename=card[1].lower().replace(" ", "_") + ".jpg",
+                    self.db.get_img(thing[0], type == "map"),
+                    filename=thing[1].lower().replace(" ", "_") + ".jpg",
                 ),
             )
 
@@ -111,14 +138,19 @@ class Poller(commands.Cog):
             group = asyncio.gather(*pending, return_exceptions=True)
             await group
 
-            msgs.append((ctx.channel_id, msg.id, card[0]))
+            msgs.append((ctx.channel_id, msg.id, thing[0]))
 
             # Find the relevant tag
             tags = []
             for tag in forum_ch.available_tags:
-                if tag.name == f"{self.db.get_lowest_cost()}-Cost":
-                    tags.append(tag)
-                    break
+                if type == "card":
+                    if tag.name == f"{self.db.get_lowest_cost()}-Cost":
+                        tags.append(tag)
+                        break
+                else:
+                    if tag.name == "Map":
+                        tags.append(tag)
+                        break
 
             # Create the forum post
             #
@@ -128,9 +160,12 @@ class Poller(commands.Cog):
             # See
             # https://github.com/Pycord-Development/pycord/issues/1948
             # https://github.com/Pycord-Development/pycord/issues/1949
+            desc = forumPostDescription
+            if type == "map":
+                desc = forumPostMapDescription
             thread = await forum_ch.create_thread(
-                name = card[1],
-                content = forumPostDescription,
+                name = thing[1],
+                content = desc,
                 applied_tags = tags,
             )
 
@@ -138,12 +173,13 @@ class Poller(commands.Cog):
 
             message = await thread.fetch_message(thread.id)
             await message.edit(file=discord.File(
-                    self.db.get_img(card[0]),
-                    filename=card[1].lower().replace(" ", "_") + ".jpg",
+                    self.db.get_img(thing[0], type == "map"),
+                    filename=thing[1].lower().replace(" ", "_") + ".jpg",
                 ))
         
         self.db.insert_messages(msgs)
         self.db.insert_forum_posts(forum_posts)
+        self.db.set_round_type(type)
         self.mutex.release()
 
     @commands.slash_command()
@@ -171,10 +207,9 @@ class Poller(commands.Cog):
 
         ch = self.bot.get_channel(ctx.channel_id)
         msgs = self.db.get_messages(ctx.channel_id)
-        cost = self.db.get_lowest_cost()
 
+        type = self.db.get_round_type()
         summaries = []
-
         for item in msgs:
             msg = await ch.fetch_message(item[0])
             if msg is None:
@@ -188,19 +223,24 @@ class Poller(commands.Cog):
                 # Be sure to remove our own reaction
                 scores[score-1] = r.count - 1
             
-            # Insert the votes for the card
-            self.db.add_scores(item[1], scores)
+            # Insert the votes for the thing
+            # and mark it as having been voted on so it isn't picked again
+            txt = ""
+            if type == "card":
+                self.db.add_scores(item[1], scores)
+                self.db.mark_has_voted(item[1])
+                txt = f"No. {item[1]} {self.db.get_name(item[1])}"
+            else:
+                self.db.add_map_scores(item[1], scores)
+                self.db.mark_map_has_voted(item[1])
+                txt = self.db.get_map_name(item[1])
 
-            # Mark it as having been voted on so it isn't picked again
-            self.db.mark_has_voted(item[1])
-
-            # Send a message with information about the scores
-            name = self.db.get_name(item[1])
             removed, total, avg = weighted_average(scores.copy())
 
+            # Send a message with information about the scores
             summary = await ctx.send(
                 "\n".join([
-                    f"No. {item[1]} {name}:",
+                    txt,
                     "Raw votes: " + ",".join([str(x) for x in scores]),
                     "Total after removal: " + str(total),
                     f"Score: {avg:.4f}",
@@ -216,14 +256,16 @@ class Poller(commands.Cog):
             # Remove that message from the table
             self.db.remove_message(item[0])
 
-        
-
-        left = self.db.number_for_cost(cost)
-        summary = await ctx.send(f"There are {left} cards with cost {cost} remaining.")
-        summaries.append((ctx.channel_id, summary.id))
+        if type == "card":
+            cost = self.db.get_lowest_cost()
+            left = self.db.number_for_cost(cost)
+            summary = await ctx.send(f"There are {left} cards with cost {cost} remaining.")
+            summaries.append((ctx.channel_id, summary.id))
+        else:
+            summary = await ctx.send(f"There are {self.db.maps_left()} maps remaining.")
+            summaries.append((ctx.channel_id, summary.id))
 
         self.db.insert_summaries(summaries)
-
         self.in_progress = False
         self.mutex.release()
 

@@ -4,10 +4,20 @@ import sqlite3
 import json
 
 class DB:
-    def __init__(self, fname: str, manifest_path: str, gallery_path: str):
+    def __init__(
+            self,
+            fname: str,
+            manifest_path: str,
+            # hehe.
+            mapifest_path: str,
+            gallery_path: str
+    ):
         self.conn = sqlite3.connect(fname)
         self.gallery_path = gallery_path
         cur = self.conn.cursor()
+
+        with open(mapifest_path) as f:
+            self.mapifest = json.loads(f.read())
 
         with open(manifest_path) as f:
             self.manifest = json.loads(f.read())
@@ -19,12 +29,30 @@ class DB:
             rarity VARCHAR(255),
             voted INTEGER
         )""")
+
+        cur.execute("""CREATE TABLE IF NOT EXISTS maps(
+            number INTEGER PRIMARY KEY,
+            name VARCHAR(255),
+            voted INTEGER
+        )""")
+
+        cur.execute("""CREATE TABLE IF NOT EXISTS map_votes(
+            number INTEGER,
+            score INTEGER,
+            votes INTEGER,
+            PRIMARY KEY (number, score)
+        )""")
     
         cur.execute("""CREATE TABLE IF NOT EXISTS votes(
             number INTEGER,
             score INTEGER,
             votes INTEGER,
             PRIMARY KEY (number, score)
+        )""")
+
+        # hack: "map" or "card"; default card
+        cur.execute("""CREATE TABLE IF NOT EXISTS round_type(
+            thing VARCHAR(255)
         )""")
 
         # List of in-flight messages
@@ -53,6 +81,23 @@ class DB:
 
         cur.executemany("INSERT OR IGNORE INTO cards VALUES(?, ?, ?, ?, 0)", rows)
         
+        rows = []
+        for number in self.mapifest:
+            rows.append((number, self.mapifest[number]["name"]))
+
+        cur.executemany("INSERT OR IGNORE INTO maps VALUES(?, ?, 0)", rows)
+
+        self.conn.commit()
+
+    def get_round_type(self):
+        cur = self.conn.cursor()
+        res = cur.execute("SELECT thing FROM round_type").fetchone()
+        return "card" if not res else res[0]
+
+    def set_round_type(self, typ :str):
+        cur = self.conn.cursor()
+        cur.execute("DELETE FROM round_type")
+        cur.execute("INSERT INTO round_type VALUES(?)", [(typ)])
         self.conn.commit()
 
     def set_forum_chan(self, id):
@@ -67,18 +112,30 @@ class DB:
         res = cur.execute("SELECT channel_id FROM forum_chan").fetchone()
         return res if not res else res[0]
 
-    def get_next_group(self, round_size):
+    def get_card_group(self, round_size):
         cur = self.conn.cursor()
         cost = self.get_lowest_cost()
         res = cur.execute("SELECT number, name, rarity FROM cards WHERE voted = 0 AND cost = ? ORDER BY RANDOM() LIMIT ?;", [(cost), (round_size)])
+        return res.fetchall()
+
+    def get_map_group(self, round_size):
+        cur = self.conn.cursor()
+        res = cur.execute("SELECT number, name FROM maps WHERE voted = 0 ORDER BY RANDOM() LIMIT ?;", [(round_size)])
         return res.fetchall()
     
     def get_name(self, num: int):
         cur = self.conn.cursor()
         return cur.execute("SELECT name FROM cards WHERE number=?", [(num)]).fetchone()[0]
 
-    def get_img(self, num: int):
-        return open(os.path.join(self.gallery_path, str(num)+".jpg"), mode="rb")
+    def get_map_name(self, num: int):
+        cur = self.conn.cursor()
+        return cur.execute("SELECT name FROM maps WHERE number=?", [(num)]).fetchone()[0]
+
+    def get_img(self, num: int, map: bool):
+        path = str(num)+".jpg"
+        if map:
+            path = "map_" + str(num) + ".png"
+        return open(os.path.join(self.gallery_path, path), mode="rb")
     
     def insert_summaries(self, msgs):
         cur = self.conn.cursor()
@@ -126,9 +183,20 @@ class DB:
         res = cur.executemany("INSERT OR REPLACE INTO votes VALUES(?, ?, ?)", rows)
         self.conn.commit()
 
+    def add_map_scores(self, number, scores):
+        cur = self.conn.cursor()
+        rows = [(number, x+1, scores[x]) for x in range(len(scores))]
+        res = cur.executemany("INSERT OR REPLACE INTO map_votes VALUES(?, ?, ?)", rows)
+        self.conn.commit()
+
     def mark_has_voted(self, number):
         cur = self.conn.cursor()
         cur.execute("UPDATE cards SET voted = 1 WHERE number=?", [(number)])
+        self.conn.commit()
+
+    def mark_map_has_voted(self, number):
+        cur = self.conn.cursor()
+        cur.execute("UPDATE maps SET voted = 1 WHERE number=?", [(number)])
         self.conn.commit()
 
     def number_for_name(self, name):
@@ -144,9 +212,14 @@ class DB:
     def get_lowest_cost(self):
         cur = self.conn.cursor()
         res = cur.execute("SELECT MIN(cost) FROM cards WHERE voted = 0").fetchone()
-        return res[0]
+        return 99 if not res else res[0]
     
     def number_for_cost(self, cost):
         cur = self.conn.cursor()
         res = cur.execute("SELECT COUNT(*) FROM cards WHERE cost = ? AND voted = 0", [(cost)]).fetchone()
+        return res[0]
+
+    def maps_left(self):
+        cur = self.conn.cursor()
+        res = cur.execute("SELECT COUNT(*) FROM maps WHERE voted = 0").fetchone()
         return res[0]
