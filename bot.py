@@ -2,6 +2,7 @@ import asyncio
 from math import ceil, floor
 from threading import Lock
 from typing import Optional
+import itertools
 
 import discord
 from discord.ext import commands
@@ -14,9 +15,22 @@ bot = discord.Bot(intents = intents)
 forumPostDescription = "Discuss how this normal card would be placed into the tier list! Assuming how easily it can be used in general or placed into a deck. Factors which contribute to this include offense, (poking/piercing, flanking, winning clashes, good special tile placement so you can easily special attack from it later) defense, (blocking, establishing routes, map control/occupying space, good normal/special tile placement so it isn't easily special attacked over later) openings, (meaning its played on the 1st turn) special building, (combo ability, how easy is it to activate the card's special point) special attacks, (this can be considered for all aspects of the match which is early/mid/endgame) its ability to be played at any time, (wont be a brick/unusable past a specific point) and finally the niche situations that it would be usable in if thats applicable. Which is described in the voting channel. (Note that every map is considered in discussions except for Box Seats)"
 forumPostMapDescription = "Discuss what you think about this map."
 
-reactions = [str(x)+"\N{combining enclosing keycap}" for x in list(range(1,10))+[0]]
+highest_possible_vote = 10
+
+def reactions(n):
+    if n > highest_possible_vote:
+        raise ValueError("Only <{highest_possible_vote} are supported")
+
+    nums = range(1, n)
+    extra = []
+    if n == 10:
+        extra = [0]
+    else:
+        extra = [n]
+    return [str(x)+"\N{combining enclosing keycap}" for x in itertools.chain(nums, extra)]
+
 def score_from_reaction_name(name: str) -> Optional[int]:
-    if name not in reactions:
+    if name not in reactions(highest_possible_vote):
         return None
     s = int(name[0])
     # Zero means ten, since there's no ten keycap (?)
@@ -132,8 +146,12 @@ class Poller(commands.Cog):
                 ),
             )
 
+            max_vote = 10
+            if type == "map":
+                max_vote = 5
+
             pending = []
-            for r in reactions:
+            for r in reactions(max_vote):
                 pending.append(msg.add_reaction(discord.PartialEmoji(name=r)))
             group = asyncio.gather(*pending, return_exceptions=True)
             await group
@@ -215,7 +233,11 @@ class Poller(commands.Cog):
             if msg is None:
                 self.db.remove_message(item[0])
             
-            scores = [0]*10
+            max_vote = 10
+            if type == "map":
+                max_vote = 5
+
+            scores = [0]*max_vote
             for r in msg.reactions:
                 score = score_from_reaction_name(r.emoji)
                 if score is None:
