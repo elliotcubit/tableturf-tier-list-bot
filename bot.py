@@ -12,8 +12,11 @@ from db import DB
 intents = discord.Intents.default()
 bot = discord.Bot(intents = intents)
 
-forumPostDescription = "Discuss how this normal card would be placed into the tier list! Assuming how easily it can be used in general or placed into a deck. Factors which contribute to this include offense, (poking/piercing, flanking, winning clashes, good special tile placement so you can easily special attack from it later) defense, (blocking, establishing routes, map control/occupying space, good normal/special tile placement so it isn't easily special attacked over later) openings, (meaning its played on the 1st turn) special building, (combo ability, how easy is it to activate the card's special point) special attacks, (this can be considered for all aspects of the match which is early/mid/endgame) its ability to be played at any time, (wont be a brick/unusable past a specific point) and finally the niche situations that it would be usable in if thats applicable. Which is described in the voting channel. (Note that every map is considered in discussions except for Box Seats)"
-forumPostMapDescription = "Discuss how this map would be placed into the tier list! Assuming this map is played in a competitive Tableturf Battle tournament. Factors which contribute to this include the design of the map, (how easy is it to access certain parts of the map, what does the design of the map encourage/discourage) level of card/deck dependency, allowance of several strategies/playstyles, overcentralizing strategies/playstyles, map size, (both in the literal size of the stage and areas concerning parts of the map) and starting special tile location. (how far away is it from the opposing starting special tile location)"
+forumDescription = {
+    "sleeve": "Discuss how this card sleeve would be placed into the tier list! Assuming this sleeve is used on a Tableturf Battle deck in-game. Factors which contribute to this include how unique is the sleeve design wise, (is it copy pasted from another sleeve?) visual appeal, contrast, color theory/balance, saturation, and theming. (how well do you think the character/concept is represented in the sleeve)",
+    "card": "Discuss how this normal card would be placed into the tier list! Assuming how easily it can be used in general or placed into a deck. Factors which contribute to this include offense, (poking/piercing, flanking, winning clashes, good special tile placement so you can easily special attack from it later) defense, (blocking, establishing routes, map control/occupying space, good normal/special tile placement so it isn't easily special attacked over later) openings, (meaning its played on the 1st turn) special building, (combo ability, how easy is it to activate the card's special point) special attacks, (this can be considered for all aspects of the match which is early/mid/endgame) its ability to be played at any time, (wont be a brick/unusable past a specific point) and finally the niche situations that it would be usable in if thats applicable. Which is described in the voting channel. (Note that every map is considered in discussions except for Box Seats)",
+    "map": "Discuss how this map would be placed into the tier list! Assuming this map is played in a competitive Tableturf Battle tournament. Factors which contribute to this include the design of the map, (how easy is it to access certain parts of the map, what does the design of the map encourage/discourage) level of card/deck dependency, allowance of several strategies/playstyles, overcentralizing strategies/playstyles, map size, (both in the literal size of the stage and areas concerning parts of the map) and starting special tile location. (how far away is it from the opposing starting special tile location)"
+}
 
 highest_possible_vote = 10
 
@@ -69,7 +72,7 @@ class Poller(commands.Cog):
     @discord.option(
         "type",
         description = "Thing to vote on.",
-        choices = ["card", "map"],
+        choices = ["card", "map", "sleeve"],
         default = "card",
     )
     @commands.has_any_role("Whopper")
@@ -105,7 +108,7 @@ class Poller(commands.Cog):
         if type == "card":
             await ctx.respond(f"Ok! Starting a new round with at most {size} {self.db.get_lowest_cost()}-cost cards.")
         else:
-            await ctx.respond(f"Ok! Starting a new round with at most {size} maps.")
+            await ctx.respond(f"Ok! Starting a new round with at most {size} {type}s.")
 
         # Delete summaries from the previous round
         ch = self.bot.get_channel(ctx.channel_id)
@@ -121,8 +124,10 @@ class Poller(commands.Cog):
         things = []
         if type == "card":
             things = self.db.get_card_group(size)
-        else:
+        elif type == "map":
             things = self.db.get_map_group(size)
+        else:
+            things = self.db.get_sleeve_group(size)
 
         if not things:
             await ctx.send("There's nothing left to do!")
@@ -141,13 +146,13 @@ class Poller(commands.Cog):
             msg = await ctx.send(
                 txt,
                 file = discord.File(
-                    self.db.get_img(thing[0], type == "map"),
+                    self.db.get_img(thing[0], type),
                     filename=thing[1].lower().replace(" ", "_") + ".jpg",
                 ),
             )
 
             max_vote = 10
-            if type == "map":
+            if type != "card":
                 max_vote = 5
 
             pending = []
@@ -165,8 +170,12 @@ class Poller(commands.Cog):
                     if tag.name == f"{self.db.get_lowest_cost()}-Cost":
                         tags.append(tag)
                         break
-                else:
+                elif type == "map":
                     if tag.name == "Map":
+                        tags.append(tag)
+                        break
+                else:
+                    if tag.name == "Card Sleeve":
                         tags.append(tag)
                         break
 
@@ -178,9 +187,7 @@ class Poller(commands.Cog):
             # See
             # https://github.com/Pycord-Development/pycord/issues/1948
             # https://github.com/Pycord-Development/pycord/issues/1949
-            desc = forumPostDescription
-            if type == "map":
-                desc = forumPostMapDescription
+            desc = forumDescription[type]
             thread = await forum_ch.create_thread(
                 name = thing[1],
                 content = desc,
@@ -191,7 +198,7 @@ class Poller(commands.Cog):
 
             message = await thread.fetch_message(thread.id)
             await message.edit(file=discord.File(
-                    self.db.get_img(thing[0], type == "map"),
+                    self.db.get_img(thing[0], type),
                     filename=thing[1].lower().replace(" ", "_") + ".jpg",
                 ))
         
@@ -234,7 +241,7 @@ class Poller(commands.Cog):
                 self.db.remove_message(item[0])
             
             max_vote = 10
-            if type == "map":
+            if type != "card":
                 max_vote = 5
 
             scores = [0]*max_vote
@@ -252,10 +259,14 @@ class Poller(commands.Cog):
                 self.db.add_scores(item[1], scores)
                 self.db.mark_has_voted(item[1])
                 txt = f"No. {item[1]} {self.db.get_name(item[1])}"
-            else:
+            elif type == "map":
                 self.db.add_map_scores(item[1], scores)
                 self.db.mark_map_has_voted(item[1])
                 txt = self.db.get_map_name(item[1])
+            else:
+                self.db.add_sleeve_scores(item[1], scores)
+                self.db.mark_sleeve_has_voted(item[1])
+                txt = self.db.get_sleeve_name(item[1])
 
             removed, total, avg = weighted_average(scores.copy())
 
@@ -283,8 +294,11 @@ class Poller(commands.Cog):
             left = self.db.number_for_cost(cost)
             summary = await ctx.send(f"There are {left} cards with cost {cost} remaining.")
             summaries.append((ctx.channel_id, summary.id))
-        else:
+        elif type == "map":
             summary = await ctx.send(f"There are {self.db.maps_left()} maps remaining.")
+            summaries.append((ctx.channel_id, summary.id))
+        else:
+            summary = await ctx.send(f"There are {self.db.sleeves_left()} sleeves remaining.")
             summaries.append((ctx.channel_id, summary.id))
 
         self.db.insert_summaries(summaries)
